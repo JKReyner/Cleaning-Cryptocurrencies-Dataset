@@ -1,11 +1,16 @@
 import pandas as pd
 
 # read dataframe
-# the data frame can be titled whatever you want
-# if you wish to change it then run CTRL+F and change all instances of 'btc' to your desired change
-# it is currently using btc since the base data used is the Bitcoin data
+# you can reference any of the data frames in the
+# https://www.kaggle.com/kaushiksuresh147/top-10-cryptocurrencies-historical-dataset
 
-btc = pd.read_csv('Bitcoin Historical Data.csv')
+raw_data = pd.read_csv('Bitcoin Historical Data.csv')
+
+# the data in question is structured such that the dates begin with the most recent date
+# to make for a more convenient data set, this command will reverse the rows so that the date starts at the earliest
+# recorded one and counts up
+
+data = raw_data[::-1].reset_index(drop=True)
 
 # change Date format AND create separate columns for year, month, day
 
@@ -59,8 +64,6 @@ def col_names(df):
         print("Please enter a valid data frame.")
     return
 
-# function to modify the entire data frame with a single command
-
 def run_all(df):
     if isinstance(df, pd.DataFrame):
         date_format(df)
@@ -73,9 +76,8 @@ def run_all(df):
 
 # run function to alter the data frame
 
-run_all(btc)
+run_all(data)
 
 # export to CSV
-# you can change the title to whatever you want
 
-btc.to_csv("btc.csv")
+data.to_csv('btc.csv')
