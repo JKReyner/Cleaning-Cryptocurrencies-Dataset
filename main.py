@@ -12,6 +12,14 @@ raw_data = pd.read_csv('Bitcoin Historical Data.csv')
 
 data = raw_data[::-1].reset_index(drop=True)
 
+# some of the data sets use different column names from the others, these statements check to fix that
+
+if 'Vol.' in data.columns:
+    data = data.rename(columns = {'Vol.':'Volume'})
+
+if 'Change %' in data.columns:
+    data = data.rename(columns = {'Change %':'Change'})
+
 # change Date format AND create separate columns for year, month, day
 
 def date_format(df):
@@ -27,17 +35,32 @@ def date_format(df):
 
 def num_format(df):
     if isinstance(df, pd.DataFrame):
+
+        # ensure the data frame is in the correct format
+
         if 'Price' and 'Open' and 'High' and 'Low' and 'Change' not in df.columns:
             print("Invalid entry, please use a data frame with Price, Open, High, Low and Change columns.")
+
         else:
-            df['Price'] = df.Price.str.replace(',', '')
-            df['Open'] = df.Open.str.replace(',', '')
-            df['High'] = df.High.str.replace(',', '')
-            df['Low'] = df.Low.str.replace(',', '')
+
+            # the price, open, high and low columns may or may not include commas which change their type to strings
+            # this will check for that
+
+            if isinstance(df['Price'], str):
+                df['Price'] = df.Price.str.replace(',', '')
+            if isinstance(df['Open'], str):
+                df['Open'] = df.Open.str.replace(',', '')
+            if isinstance(df['High'], str):
+                df['High'] = df.High.str.replace(',', '')
+            if isinstance(df['Low'], str):
+                df['Low'] = df.Low.str.replace(',', '')
+
+            # the Change column will always have the % signs removed so it does not check for string
+
             df['Change'] = df.Change.str.replace('%', '')
     return
 
-# reformat the Volume column to numeric - requires more code than the previous set
+# reformat the Volume column to numeric
 
 def to_float(x):
     if type(x) == float or type(x) == int:
